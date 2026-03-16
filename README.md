@@ -299,34 +299,3 @@ bun run src/index.ts -i doc.md --summary --model "meta-llama/Llama-3.1-8B-Instru
 3. **RAG Preparation**: Prepare documents for retrieval-augmented generation
 4. **Content Analysis**: Analyze document structure with AI summaries
 5. **Migration**: Convert markdown to structured JSON for other systems
-
-## Development
-
-### Build
-
-```bash
-bun build src/index.ts --outdir dist --target bun
-```
-
-### Lint
-
-```bash
-bun run lint
-```
-
-### Type Check
-
-```bash
-bun x tsc --noEmit
-```
-
-## License
-
-[Your License Here]
-
-## Contributing
-
-Contributions welcome! Please ensure:
-- Code passes linting
-- TypeScript compiles without errors
-- New features include documentation
