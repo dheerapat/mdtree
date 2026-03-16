@@ -181,8 +181,7 @@ Return only the summary text, no preamble.`;
 
     return response.choices[0]?.message?.content?.trim() ?? nodeText;
   } catch (err) {
-    console.error(`[generateNodeSummary] Error for node "${node.title}":`, err);
-    return nodeText;
+    throw new Error(`Failed to generate summary for node "${node.title}": ${err}`);
   }
 }
 
@@ -215,8 +214,7 @@ Return only the description, no preamble.`;
 
     return response.choices[0]?.message?.content?.trim() ?? "";
   } catch (err) {
-    console.error("[generateDocDescription] Error:", err);
-    return "";
+    throw new Error(`Failed to generate document description: ${err}`);
   }
 }
 

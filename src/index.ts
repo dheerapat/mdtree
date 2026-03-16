@@ -26,7 +26,7 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { dirname, join, basename, extname } from "path";
-import { mdToTree } from "./mdTree.ts";
+import { mdToTree } from "./md-tree.ts";
 import { printJson, printToc } from "./utils.ts";
 
 // ─── Argument parsing ─────────────────────────────────────────────────────────
@@ -189,7 +189,8 @@ async function main() {
   // Resolve output path
   const docName = basename(args.input, extname(args.input));
   const outputPath =
-    args.output ?? join(dirname(args.input), "..", "results", `${docName}_structure.json`);
+    args.output ??
+    join(dirname(args.input), "results", `${docName}_structure.json`);
 
   // Run pipeline
   console.log(`\nProcessing: ${args.input}`);
