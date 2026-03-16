@@ -1,0 +1,24 @@
+{
+  "name": "md-tree",
+  "version": "1.0.0",
+  "description": "Convert Markdown files into hierarchical tree structures with optional LLM summaries",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "lint": "bun x tsc --noEmit"
+  },
+  "bin": {
+    "md-tree": "src/index.ts"
+  },
+  "dependencies": {
+    "openai": "^4.78.1",
+    "tiktoken": "^1.0.21"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}
