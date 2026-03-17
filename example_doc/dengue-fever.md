@@ -91,7 +91,7 @@
 
 ---
 
-REFERENCE TITLE:
+## REFERENCE
 Schaefer TJ, Panda PK, Wolford RW. Dengue Fever. [Updated 2024 Mar 6]. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2025 Jan-.
 
 CITATION INFO:
