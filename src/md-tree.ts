@@ -1,17 +1,14 @@
-/**
- * mdTree.ts
- *
- * Core pipeline: Markdown → flat node list → tree → optional thinning →
- * optional LLM summaries → MdTreeResult.
- *
- * Direct TypeScript port of the Python md_to_tree.py module.
- */
-
 import { readFileSync } from "fs";
 import { basename, extname } from "path";
-import type { CleanTreeNode, FlatNode, MdToTreeOptions, MdTreeResult, RawNode, TreeNode } from "./types.ts";
+import type {
+  CleanTreeNode,
+  FlatNode,
+  MdToTreeOptions,
+  MdTreeResult,
+  RawNode,
+  TreeNode,
+} from "./types.ts";
 import {
-  buildTocString,
   countTokens,
   createCleanStructureForDescription,
   formatStructure,
@@ -57,7 +54,7 @@ export function extractNodesFromMarkdown(markdownContent: string): {
 
 export function extractNodeTextContent(
   nodeList: RawNode[],
-  markdownLines: string[]
+  markdownLines: string[],
 ): FlatNode[] {
   const allNodes: FlatNode[] = [];
 
@@ -67,7 +64,7 @@ export function extractNodeTextContent(
 
     if (!headerMatch) {
       console.warn(
-        `Warning: Line ${node.line_num} does not contain a valid header: '${lineContent}'`
+        `Warning: Line ${node.line_num} does not contain a valid header: '${lineContent}'`,
       );
       continue;
     }
@@ -84,7 +81,9 @@ export function extractNodeTextContent(
   allNodes.forEach((node, i) => {
     const startLine = node.line_num - 1;
     const endLine =
-      i + 1 < allNodes.length ? allNodes[i + 1].line_num - 1 : markdownLines.length;
+      i + 1 < allNodes.length
+        ? allNodes[i + 1].line_num - 1
+        : markdownLines.length;
     node.text = markdownLines.slice(startLine, endLine).join("\n").trim();
   });
 
@@ -95,7 +94,7 @@ export function extractNodeTextContent(
 
 export function updateNodeListWithTextTokenCount(
   nodeList: FlatNode[],
-  model?: string
+  model?: string,
 ): FlatNode[] {
   function findAllChildren(parentIndex: number, parentLevel: number): number[] {
     const indices: number[] = [];
@@ -127,7 +126,7 @@ export function updateNodeListWithTextTokenCount(
 export function treeThinningForIndex(
   nodeList: FlatNode[],
   minNodeToken: number,
-  model?: string
+  model?: string,
 ): FlatNode[] {
   function findAllChildren(parentIndex: number, parentLevel: number): number[] {
     const indices: number[] = [];
@@ -232,7 +231,7 @@ export function cleanTreeForOutput(treeNodes: TreeNode[]): CleanTreeNode[] {
 async function getNodeSummary(
   node: TreeNode | CleanTreeNode,
   summaryTokenThreshold: number,
-  model?: string
+  model?: string,
 ): Promise<string> {
   const nodeText = node.text ?? "";
   const numTokens = countTokens(nodeText, model);
@@ -243,12 +242,12 @@ async function getNodeSummary(
 export async function generateSummariesForStructure(
   structure: (TreeNode | CleanTreeNode)[],
   summaryTokenThreshold: number,
-  model?: string
+  model?: string,
 ): Promise<(TreeNode | CleanTreeNode)[]> {
   const nodes = structureToList(structure) as (TreeNode | CleanTreeNode)[];
 
   const summaries = await Promise.all(
-    nodes.map((n) => getNodeSummary(n, summaryTokenThreshold, model))
+    nodes.map((n) => getNodeSummary(n, summaryTokenThreshold, model)),
   );
 
   nodes.forEach((node, i) => {
@@ -286,13 +285,21 @@ export async function mdToTree(opts: MdToTreeOptions): Promise<MdTreeResult> {
   let nodesWithContent = extractNodeTextContent(nodeList, lines);
 
   if (ifThinning && minTokenThreshold != null) {
-    nodesWithContent = updateNodeListWithTextTokenCount(nodesWithContent, model);
+    nodesWithContent = updateNodeListWithTextTokenCount(
+      nodesWithContent,
+      model,
+    );
     console.log("Thinning nodes...");
-    nodesWithContent = treeThinningForIndex(nodesWithContent, minTokenThreshold, model);
+    nodesWithContent = treeThinningForIndex(
+      nodesWithContent,
+      minTokenThreshold,
+      model,
+    );
   }
 
   console.log("Building tree from nodes...");
-  let treeStructure: (TreeNode | CleanTreeNode)[] = buildTreeFromNodes(nodesWithContent);
+  let treeStructure: (TreeNode | CleanTreeNode)[] =
+    buildTreeFromNodes(nodesWithContent);
 
   if (ifAddNodeId === "yes") {
     writeNodeId(treeStructure as TreeNode[]);
@@ -302,26 +309,40 @@ export async function mdToTree(opts: MdToTreeOptions): Promise<MdTreeResult> {
 
   if (ifAddNodeSummary === "yes") {
     treeStructure = formatStructure(treeStructure, [
-      "title", "node_id", "summary", "prefix_summary", "text", "line_num", "nodes",
+      "title",
+      "node_id",
+      "summary",
+      "prefix_summary",
+      "text",
+      "line_num",
+      "nodes",
     ]);
 
     console.log("Generating summaries for each node...");
     treeStructure = await generateSummariesForStructure(
       treeStructure,
       summaryTokenThreshold,
-      model
+      model,
     );
 
     if (ifAddNodeText === "no") {
       treeStructure = formatStructure(treeStructure, [
-        "title", "node_id", "summary", "prefix_summary", "line_num", "nodes",
+        "title",
+        "node_id",
+        "summary",
+        "prefix_summary",
+        "line_num",
+        "nodes",
       ]);
     }
 
     if (ifAddDocDescription === "yes") {
       console.log("Generating document description...");
       const cleanStructure = createCleanStructureForDescription(treeStructure);
-      const docDescription = await generateDocDescription(cleanStructure, model);
+      const docDescription = await generateDocDescription(
+        cleanStructure,
+        model,
+      );
       return {
         doc_name: basename(mdPath, extname(mdPath)),
         doc_description: docDescription,
@@ -332,8 +353,23 @@ export async function mdToTree(opts: MdToTreeOptions): Promise<MdTreeResult> {
     treeStructure = formatStructure(
       treeStructure,
       ifAddNodeText === "yes"
-        ? ["title", "node_id", "summary", "prefix_summary", "text", "line_num", "nodes"]
-        : ["title", "node_id", "summary", "prefix_summary", "line_num", "nodes"]
+        ? [
+            "title",
+            "node_id",
+            "summary",
+            "prefix_summary",
+            "text",
+            "line_num",
+            "nodes",
+          ]
+        : [
+            "title",
+            "node_id",
+            "summary",
+            "prefix_summary",
+            "line_num",
+            "nodes",
+          ],
     );
   }
 

@@ -1,11 +1,3 @@
-/**
- * utils.ts
- *
- * Full TypeScript equivalent of the Python utils module.
- * Covers: token counting, tree traversal helpers, structure formatting,
- * LLM-backed summary / description generation, and pretty-printing.
- */
-
 import OpenAI from "openai";
 import { get_encoding, type Tiktoken } from "tiktoken";
 import type { CleanTreeNode, TreeNode } from "./types.ts";
@@ -65,7 +57,7 @@ function resolveEncoding(model?: string): string {
  * Mirrors Python's `structure_to_list`.
  */
 export function structureToList(
-  structure: TreeNode[] | CleanTreeNode[]
+  structure: TreeNode[] | CleanTreeNode[],
 ): (TreeNode | CleanTreeNode)[] {
   const result: (TreeNode | CleanTreeNode)[] = [];
 
@@ -86,10 +78,7 @@ export function structureToList(
  * Recursively write sequential node IDs (zero-padded to 4 digits).
  * Mirrors Python's `write_node_id`.
  */
-export function writeNodeId(
-  nodes: TreeNode[],
-  counter = { value: 1 }
-): void {
+export function writeNodeId(nodes: TreeNode[], counter = { value: 1 }): void {
   for (const node of nodes) {
     node.node_id = String(counter.value).padStart(4, "0");
     counter.value++;
@@ -118,7 +107,7 @@ const VALID_FIELDS: NodeField[] = [
  */
 export function formatStructure(
   nodes: (TreeNode | CleanTreeNode)[],
-  order: NodeField[] = VALID_FIELDS
+  order: NodeField[] = VALID_FIELDS,
 ): CleanTreeNode[] {
   return nodes.map((node) => {
     const out: Partial<CleanTreeNode> = {};
@@ -145,7 +134,7 @@ export function formatStructure(
  * tree for doc-description generation.
  */
 export function createCleanStructureForDescription(
-  nodes: (TreeNode | CleanTreeNode)[]
+  nodes: (TreeNode | CleanTreeNode)[],
 ): CleanTreeNode[] {
   return formatStructure(nodes, ["title", "node_id", "nodes"]);
 }
@@ -158,13 +147,13 @@ export function createCleanStructureForDescription(
  */
 export async function generateNodeSummary(
   node: TreeNode | CleanTreeNode,
-  model = "gpt-4o-mini"
+  model = "gpt-4o-mini",
 ): Promise<string> {
   const client = getClient();
   const nodeText = node.text ?? "";
 
-  const systemPrompt = `You are a precise technical summariser. 
-Given the text content of a document section, produce a concise summary (2-4 sentences) that captures the main ideas. 
+  const systemPrompt = `You are a precise technical summariser.
+Given the text content of a document section, produce a concise summary (2-4 sentences) that captures the main ideas.
 Return only the summary text, no preamble.`;
 
   const userPrompt = `Section title: ${node.title}\n\nContent:\n${nodeText}`;
@@ -181,7 +170,9 @@ Return only the summary text, no preamble.`;
 
     return response.choices[0]?.message?.content?.trim() ?? nodeText;
   } catch (err) {
-    throw new Error(`Failed to generate summary for node "${node.title}": ${err}`);
+    throw new Error(
+      `Failed to generate summary for node "${node.title}": ${err}`,
+    );
   }
 }
 
@@ -191,7 +182,7 @@ Return only the summary text, no preamble.`;
  */
 export async function generateDocDescription(
   cleanStructure: CleanTreeNode[],
-  model = "gpt-4o-mini"
+  model = "gpt-4o-mini",
 ): Promise<string> {
   const client = getClient();
   const toc = buildTocString(cleanStructure);
@@ -232,7 +223,7 @@ export function printJson(value: unknown): void {
  */
 export function buildTocString(
   nodes: (TreeNode | CleanTreeNode)[],
-  depth = 0
+  depth = 0,
 ): string {
   const lines: string[] = [];
 
