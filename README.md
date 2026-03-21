@@ -16,8 +16,8 @@ Perfect for document indexing, knowledge base structuring, semantic chunking for
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd mdtree
+git clone git@github.com:auto-medica-labs/md-tree.git
+cd md-tree
 
 # Install dependencies
 bun install
