@@ -5,6 +5,7 @@ Convert Markdown files into hierarchical JSON tree structures with optional LLM 
 ## Overview
 
 `md-tree` parses Markdown documents and creates structured JSON representations with:
+
 - Hierarchical tree structure based on headers
 - Optional AI-powered summaries for each section
 - Document-level descriptions
@@ -41,13 +42,13 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 
 The tool works with any OpenAI-compatible API:
 
-| Provider | OPENAI_BASE_URL | Notes |
-|----------|----------------|-------|
-| OpenAI | `https://api.openai.com/v1` | Official API |
-| Groq | `https://api.groq.com/openai/v1` | Fast inference |
-| Together | `https://api.together.xyz/v1` | Open models |
-| Ollama | `http://localhost:11434/v1` | Local LLMs |
-| LM Studio | `http://localhost:1234/v1` | Local GUI |
+| Provider  | OPENAI_BASE_URL                  | Notes          |
+| --------- | -------------------------------- | -------------- |
+| OpenAI    | `https://api.openai.com/v1`      | Official API   |
+| Groq      | `https://api.groq.com/openai/v1` | Fast inference |
+| Together  | `https://api.together.xyz/v1`    | Open models    |
+| Ollama    | `http://localhost:11434/v1`      | Local LLMs     |
+| LM Studio | `http://localhost:1234/v1`       | Local GUI      |
 
 **For local providers without API key:** Set `OPENAI_API_KEY` to any value (e.g., `lm-studio`).
 
@@ -77,20 +78,20 @@ bun run src/index.ts -i docs/guide.md --summary --doc-description --thinning
 
 ## Command Options
 
-| Option | Short | Description | Default |
-|--------|-------|-------------|---------|
-| `--input` | `-i` | Path to input Markdown file (required) | - |
-| `--output` | `-o` | Output JSON path | `results/<name>_structure.json` |
-| `--model` | `-m` | LLM model name | `gpt-4o-mini` |
-| `--summary` | `-s` | Generate LLM node summaries | `false` |
-| `--summary-threshold` | - | Min tokens before summarizing | `200` |
-| `--thinning` | - | Merge nodes below token threshold | `false` |
-| `--thinning-threshold` | - | Min tokens per node before merging | `5000` |
-| `--doc-description` | - | Generate document-level description | `false` |
-| `--with-text` | - | Include raw node text in output | `false` |
-| `--no-node-id` | - | Omit node IDs from output | `false` |
-| `--toc` | - | Print table of contents to stdout | `false` |
-| `--help` | `-h` | Show help message | - |
+| Option                 | Short | Description                            | Default                         |
+| ---------------------- | ----- | -------------------------------------- | ------------------------------- |
+| `--input`              | `-i`  | Path to input Markdown file (required) | -                               |
+| `--output`             | `-o`  | Output JSON path                       | `results/<name>_structure.json` |
+| `--model`              | `-m`  | LLM model name                         | `gpt-4o-mini`                   |
+| `--summary`            | `-s`  | Generate LLM node summaries            | `false`                         |
+| `--summary-threshold`  | -     | Min tokens before summarizing          | `200`                           |
+| `--thinning`           | -     | Merge nodes below token threshold      | `false`                         |
+| `--thinning-threshold` | -     | Min tokens per node before merging     | `5000`                          |
+| `--doc-description`    | -     | Generate document-level description    | `false`                         |
+| `--with-text`          | -     | Include raw node text in output        | `false`                         |
+| `--no-node-id`         | -     | Omit node IDs from output              | `false`                         |
+| `--toc`                | -     | Print table of contents to stdout      | `false`                         |
+| `--help`               | `-h`  | Show help message                      | -                               |
 
 ## Examples
 
@@ -101,6 +102,7 @@ bun run src/index.ts -i documentation.md --toc
 ```
 
 **Output:**
+
 ```
 TABLE OF CONTENTS
 ============================================================
@@ -118,6 +120,7 @@ bun run src/index.ts -i research-paper.md --summary --output results/paper.json
 ```
 
 **Output structure:**
+
 ```json
 {
   "doc_name": "research-paper",
@@ -192,17 +195,17 @@ bun run src/index.ts -i notes.md --summary --model "local-model"
 
 ### Field Descriptions
 
-| Field | Description |
-|-------|-------------|
-| `doc_name` | Document filename (without extension) |
-| `doc_description` | AI-generated high-level document summary |
-| `title` | Section title from Markdown header |
-| `node_id` | Sequential zero-padded ID (`0001`, `0002`, ...) |
-| `summary` | AI-generated summary (leaf nodes) |
-| `prefix_summary` | AI-generated summary (parent nodes) |
-| `line_num` | Line number in original file |
-| `nodes` | Array of child sections (if any) |
-| `text` | Raw section text (with `--with-text`) |
+| Field             | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| `doc_name`        | Document filename (without extension)           |
+| `doc_description` | AI-generated high-level document summary        |
+| `title`           | Section title from Markdown header              |
+| `node_id`         | Sequential zero-padded ID (`0001`, `0002`, ...) |
+| `summary`         | AI-generated summary (leaf nodes)               |
+| `prefix_summary`  | AI-generated summary (parent nodes)             |
+| `line_num`        | Line number in original file                    |
+| `nodes`           | Array of child sections (if any)                |
+| `text`            | Raw section text (with `--with-text`)           |
 
 ## Key Features
 
@@ -224,6 +227,7 @@ bun run src/index.ts -i huge-doc.md --thinning --thinning-threshold 5000
 ### Summary Threshold Behavior
 
 The threshold works as follows:
+
 - `< threshold`: Use original text (no API call)
 - `≥ threshold`: Generate AI summary
 
@@ -236,6 +240,7 @@ This optimizes API usage - short content doesn't need summarization.
 **Symptom:** Original text instead of summaries
 
 **Solutions:**
+
 1. Check `.env` configuration
 2. Verify `OPENAI_API_KEY` is set
 3. Ensure `OPENAI_BASE_URL` includes protocol (`http://` or `https://`)
@@ -249,6 +254,7 @@ Error: Failed to generate summary for node "Title": Connection refused
 ```
 
 **Solutions:**
+
 - Verify `OPENAI_BASE_URL` is correct
 - Check local LLM server is running
 - Confirm port is correct (LM Studio: `1234`, Ollama: `11434`)
@@ -260,6 +266,7 @@ The tool now throws clear errors for LLM failures. If you see silent failures, e
 ### Empty Summaries
 
 If summaries are empty:
+
 - Verify API key has access to the specified model
 - Check model name is correct
 - Ensure the model supports chat completions
@@ -292,10 +299,21 @@ bun run src/index.ts -i doc.md --summary --model "gpt-4o"
 bun run src/index.ts -i doc.md --summary --model "meta-llama/Llama-3.1-8B-Instruct"
 ```
 
-## Use Cases
+## Using it in LLM call using this prompt
 
-1. **Document Indexing**: Create structured indexes of large documentation
-2. **Knowledge Base**: Organize markdown notes into searchable structures
-3. **RAG Preparation**: Prepare documents for retrieval-augmented generation
-4. **Content Analysis**: Analyze document structure with AI summaries
-5. **Migration**: Convert markdown to structured JSON for other systems
+```python
+search_prompt = f"""
+You are given a question and a tree structure of a document.
+Each node contains a node id, node title, and a corresponding summary.
+Your task is to find all nodes that are likely to contain the answer to the question.
+Question: {query}
+Document tree structure:
+{json.dumps(tree, indent=2)}
+Please reply in the following JSON format:
+{{
+    "thinking": "<Your thinking process on which nodes are relevant to the question>",
+    "node_list": ["node_id_1", "node_id_2", ..., "node_id_n"]
+}}
+Directly return the final JSON structure. Do not output anything else.
+"""
+```
